@@ -41,6 +41,7 @@ class Toolbox(GenericToolbox):
             path=app.config["watersheds_database_path"],
             s3_bucket=s3_bucket,
             s3_key=s3_key,
+            s3_endpoint=app.config.get("s3_endpoint") or None,
             check_online=app.online,
         )
 

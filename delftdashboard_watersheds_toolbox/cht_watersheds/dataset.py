@@ -37,6 +37,7 @@ class WatershedsDataset:
         self.s3_bucket = None
         self.s3_key = None
         self.s3_region = None
+        self.s3_endpoint = None
         self.prefix = ""
         self.read_metadata()
 
@@ -63,6 +64,8 @@ class WatershedsDataset:
             self.s3_key = metadata["s3_key"]
         if "s3_region" in metadata:
             self.s3_region = metadata["s3_region"]
+        if "s3_endpoint" in metadata:
+            self.s3_endpoint = metadata["s3_endpoint"]
 
     def get_watersheds_in_bbox(
         self, xmin: float, ymin: float, xmax: float, ymax: float, level: str
@@ -112,7 +115,9 @@ class WatershedsDataset:
         for file in self.files:
             if not os.path.exists(os.path.join(self.path, file)):
                 s3_client = boto3.client(
-                    "s3", config=Config(signature_version=UNSIGNED)
+                    "s3",
+                    endpoint_url=getattr(self, "s3_endpoint", None) or None,
+                    config=Config(signature_version=UNSIGNED),
                 )
                 break
         # Get all files defined in the toml file
